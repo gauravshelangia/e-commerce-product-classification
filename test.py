@@ -1,5 +1,5 @@
 import glob
-import process_data
+import process_data.process_data
 """
 Test class for testing newly implemented methods
 """
