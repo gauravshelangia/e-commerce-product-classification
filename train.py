@@ -1,6 +1,7 @@
 import create_model
 import image_data_generator
 from keras.callbacks import Callback
+from keras.callbacks import ModelCheckpoint
 
 class WeightsSaver(Callback):
     def __init__(self, model, N):
@@ -34,14 +35,20 @@ print("Get data generator")
 # get train data generator
 train_generator,validation_generator = image_data_generator.get_image_generator()
 
+# checkpoint
+filepath="weights-improvement-{epoch:02d}-{val_acc:.2f}.hdf5"
+checkpoint = ModelCheckpoint(filepath, monitor='val_acc', verbose=1, save_best_only=True, mode='max')
+callbacks_list = [checkpoint]
+
 print("Start fitting model")
 # fit model with train_generator
 model.fit_generator(
         train_generator,
-        steps_per_epoch=100 // batch_size,
-        epochs=5,
+        steps_per_epoch=400 // batch_size,
+        epochs=100,
         validation_data=validation_generator,
-        validation_steps=60 // batch_size)
+        validation_steps=160 // batch_size,
+        callbacks=callbacks_list)
 
 print("save model to h5 file")
 model.save_weights('first_try.h5')
